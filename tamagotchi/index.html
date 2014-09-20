@@ -2,25 +2,34 @@
 <head>
 
 <style>
-
+.button {
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid black;
+	cursor: pointer;
+}
 </style>
 </head>
 <body>
 
-<p>Age : <span id="age"></span> aeons</p>
-<p>Food : <span id="food"></span></p>
-<p>Energy : <span id="energy"></span></p>
-<p>Health : <span id="health"></span></p>
-<p>Poop : <span id="poop"></span></p>
+<p>Age : <span id="age"></span></p>
+<p>Croquettes : <span id="food"></span></p>
+<p>Energie : <span id="energy"></span></p>
+<p>Santé : <span id="health"></span></p>
+<p>Caca : <span id="poop"></span></p>
 <p>Fun : <span id="fun"></span></p>
 
 <hr/>
 
-<div class="button" id="feed">FEED</div>
-<div class="button" id="tuck">TUCK</div>
-<div class="button" id="clean">CLEAN</div>
-<div class="button" id="play">PLAY</div>
-<div class="button" id="heal">HEAL</div>
+<span class="button" id="feed">NOURRIR</span>
+<span class="button" id="tuck">AU DODO</span>
+<span class="button" id="clean">NETTOYER</span>
+<span class="button" id="play">POPOTTE</span>
+<span class="button" id="heal">SOIGNER</span>
+
+<hr/>
+
+<textarea cols="80" rows="10" id="log">Zouille simulator v0.1!</textarea>
 
 <script src="jquery-2.1.1.min.js"></script>
 <script type="text/javascript">
@@ -38,16 +47,16 @@ var Game = {
 	poop: 0,
 	fun: 0,
 	
-	init: {
+	init: function() {
 		var self = this;
 		
 		// Initialize Cthulhu
 		this.age = 0;
-		this.food = 10;
-		this.energy = 10;
-		this.health = 10;
+		this.food = 100;
+		this.energy = 100;
+		this.health = 100;
 		this.poop = 0;
-		this.fun = 10;
+		this.fun = 100;
 		
 		// cache DOM elements
 		this.containers["age"] = $("#age");
@@ -56,6 +65,7 @@ var Game = {
 		this.containers["health"] = $("#health");
 		this.containers["poop"] = $("#poop");
 		this.containers["fun"] = $("#fun");
+		this.containers["log"] = $("#log");
 		
 		this.buttons["feed"] = $("#feed").click(function() { self.feed(); });
 		this.buttons["tuck"] = $("#tuck").click(function() { self.tuck(); });
@@ -63,9 +73,103 @@ var Game = {
 		this.buttons["play"] = $("#play").click(function() { self.play(); });
 		this.buttons["heal"] = $("#heal").click(function() { self.heal(); });
 		
-		this.handle = window.setTimeOut(
+		this.handle = setInterval(function() { self.tick();}, this.timeOut);
+	},
+	
+	feed: function() {
+		this.log("Du bon miam miam!");
+		this.food += 20;
+	},
+	
+	tuck: function() {
+		this.log("Maintenant au dodo!");
+		this.energy += 20;
+	},
+	
+	clean: function() {
+		this.log("Mais qu'est-ce qu'il fait avec mon caca lui?");
+		this.poop -= 3;
+		this.health += 10;
+	},
+	
+	play: function() {
+		this.log("Youhou la popotte!");
+		this.fun += 20;
+		this.energy -= 20;
+	},
+	
+	heal: function() {
+		this.log("NON PAS LE VETO!");
+		this.health += 20;
+		this.energy -= 10;
+	},
+	
+	_poop: function() {
+		this.log("Livraison express d'un gros caca!");
+		this.poop++;
+	},
+	
+	tick: function() {
+		// Faim
+		this.food -= 2;
 		
-		, this.timeOut);
+		if (this.food < 15) {
+			this.health -= 2;
+			this.energy = Math.min(this.energy, 20);
+			
+			if (this.food <= 0) {
+				this.food = 0;
+				this.health -= 3;
+				this.energy -= 3;
+			}
+		} else {
+			if (Math.random() * 100 <= this.food) {
+				this._poop();
+			}
+		}
+		
+		// Energie
+		this.energy -= 2;
+		
+		if (this.energy < 20) {
+			var fatigue = (20 - this.energy) * 5;
+			
+			if (Math.random() * 100 <= fatigue) {
+				this.tuck();
+			} else {
+				this.health -= 3;
+			}
+		}
+		
+		// Fun
+		this.fun -= 2;
+		
+		if (this.fun < 20) {
+			this.energy -= 3;
+		} else {
+			if (Math.random() * 100 <= this.fun) {
+				this.log("Trop de fun, ça me revigore");
+				this.energy += 4;
+				this.health += 2;
+			}
+		}
+		
+		this.age++;
+		
+		this.show();
+	},
+	
+	log: function(message) {
+		this.containers.log.val(this.containers.log.val() + "\r\n" + message);
+	},
+	
+	show: function() {
+		this.containers.age.text(this.age);
+		this.containers.food.text(this.food);
+		this.containers.energy.text(this.energy);
+		this.containers.health.text(this.health);
+		this.containers.poop.text(this.poop);
+		this.containers.fun.text(this.fun);
 	}
 };
 
