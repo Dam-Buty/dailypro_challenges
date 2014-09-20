@@ -1,0 +1,76 @@
+<html>
+<head>
+
+<style>
+
+</style>
+</head>
+<body>
+
+<p>Age : <span id="age"></span> aeons</p>
+<p>Food : <span id="food"></span></p>
+<p>Energy : <span id="energy"></span></p>
+<p>Health : <span id="health"></span></p>
+<p>Poop : <span id="poop"></span></p>
+<p>Fun : <span id="fun"></span></p>
+
+<hr/>
+
+<div class="button" id="feed">FEED</div>
+<div class="button" id="tuck">TUCK</div>
+<div class="button" id="clean">CLEAN</div>
+<div class="button" id="play">PLAY</div>
+<div class="button" id="heal">HEAL</div>
+
+<script src="jquery-2.1.1.min.js"></script>
+<script type="text/javascript">
+(function() {
+var Game = {
+	handle: undefined,
+	timeOut: 500,
+	containers: {},
+	buttons: {},
+	
+	age: 0,
+	food: 0,
+	energy: 0,
+	health: 0,
+	poop: 0,
+	fun: 0,
+	
+	init: {
+		var self = this;
+		
+		// Initialize Cthulhu
+		this.age = 0;
+		this.food = 10;
+		this.energy = 10;
+		this.health = 10;
+		this.poop = 0;
+		this.fun = 10;
+		
+		// cache DOM elements
+		this.containers["age"] = $("#age");
+		this.containers["food"] = $("#food");
+		this.containers["energy"] = $("#energy");
+		this.containers["health"] = $("#health");
+		this.containers["poop"] = $("#poop");
+		this.containers["fun"] = $("#fun");
+		
+		this.buttons["feed"] = $("#feed").click(function() { self.feed(); });
+		this.buttons["tuck"] = $("#tuck").click(function() { self.tuck(); });
+		this.buttons["clean"] = $("#clean").click(function() { self.clean(); });
+		this.buttons["play"] = $("#play").click(function() { self.play(); });
+		this.buttons["heal"] = $("#heal").click(function() { self.heal(); });
+		
+		this.handle = window.setTimeOut(
+		
+		, this.timeOut);
+	}
+};
+
+Game.init();
+})();
+</script>
+</body>
+</html>
